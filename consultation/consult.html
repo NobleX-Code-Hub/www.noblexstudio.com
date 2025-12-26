@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Let's Talk About Your Project</title>
+		<link rel="stylesheet" href="consult.css" />
+		<link
+			rel="shortcut icon"
+			href="images/nobleX-logo-twitter-like.png"
+			type="image/x-icon" />
+		<link rel="stylesheet" href="style.css" />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+			rel="stylesheet" />
+	</head>
+	<body>
+		<img
+			class="cover"
+			src="images/c9af431cdb9322e4ff4a43af70db96ae.jpg"
+			alt="c9af431cdb9322e4ff4a43af70db96ae.jpg" />
+		<div class="loader_container">
+			<div class="loader"></div>
+			<img
+				class="loader-letter"
+				src="images/nobleX-logo-hostinger.png"
+				alt="nobleX-logo-hostinger" />
+		</div>
+		<section class="consultation">
+			<h1>Start Your Project Consultation</h1>
+			<p>Tell me about your idea and i'll get back to you fast</p>
+			<div class="service-toggle">
+				<button class="active" onclick="selectService('Website Design')">
+					Website Design
+				</button>
+				<button onclick="selectService('Graphics Design')">
+					Graphics Design
+				</button>
+			</div>
+
+			<form action="https://api.web3forms.com/submit" method="POST">
+				<input
+					type="hidden"
+					name="access_key"
+					value="e40b5ff4-9839-492b-9ae6-8c8ffa81e294" />
+				<input
+					type="hidden"
+					name="Service Type"
+					id="serviceType"
+					value="Website Design" />
+				<div class="grid">
+					<input
+						type="text"
+						name="First Name"
+						placeholder="First Name"
+						required />
+					<input
+						type="text"
+						name="Second Name"
+						placeholder="Second Name"
+						required />
+					<input
+						type="text"
+						name="Last Name"
+						placeholder="Last Name"
+						required />
+					<input
+						type="text"
+						name="Address"
+						placeholder="Resident Address"
+						required />
+				</div>
+
+				<div class="grid">
+					<input
+						type="email"
+						name="Email"
+						placeholder="Email Address"
+						required />
+					<input
+						type="tel"
+						name="Phone Number"
+						placeholder="Phone Number"
+						required />
+				</div>
+
+				<textarea
+					name="Project Description"
+					placeholder="Describe your project in detail..."
+					required></textarea>
+
+				<button type="submit">Send Consultation</button>
+			</form>
+		</section>
+		<script src="consult.js"></script>
+	</body>
+</html>
