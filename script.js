@@ -446,3 +446,19 @@ hoverServe.addEventListener('click', () => {
 	serveGuys.classList.toggle('show');
 	mobile_menu.classList.toggle('cursor');
 });
+
+const closeMob = document.querySelector('.closeMob');
+const closeSides = document.querySelector('.closeSides');
+const closeSide = document.querySelector('.closeSide');
+
+closeMob.addEventListener('click', () => {
+	mobile_menu.classList.toggle('active');
+});
+
+closeSides.addEventListener('click', () => {
+	mobile_menu.classList.toggle('active');
+});
+
+closeSide.addEventListener('click', () => {
+	mobile_menu.classList.toggle('active');
+});
