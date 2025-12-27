@@ -177,6 +177,46 @@ button[type='submit']:hover {
 
 /* MEDIA QUERIES */
 
+@media (min-width: 1200px) {
+	.consultation {
+		max-width: 740px;
+	}
+	.consultation h1 {
+		font-size: 30px;
+	}
+	/* textarea {
+		min-height: 150px;
+	} */
+}
+
+@media (max-width: 1024px) {
+	.consultation {
+		max-width: 650px;
+	}
+	.consultation h1 {
+		font-size: 26px;
+	}
+	button[type='submit'] {
+		font-size: 16px;
+	}
+}
+
+@media (max-width: 768px) {
+	.consultation {
+		width: 95%;
+		padding: 30px;
+	}
+	.consultation h1 {
+		font-size: 24px;
+	}
+	.grid {
+		grid-template-columns: 1fr 1fr;
+	}
+	textarea {
+		min-height: 110px;
+	}
+}
+
 @media (max-width: 480px) {
 	body {
 		padding: 20px;
@@ -208,44 +248,4 @@ button[type='submit']:hover {
 		padding: 14px;
 		font-size: 15px;
 	}
-}
-
-@media (max-width: 768px) {
-	.consultation {
-		width: 95%;
-		padding: 30px;
-	}
-	.consultation h1 {
-		font-size: 24px;
-	}
-	.grid {
-		grid-template-columns: 1fr 1fr;
-	}
-	textarea {
-		min-height: 110px;
-	}
-}
-
-@media (max-width: 1024px) {
-	.consultation {
-		max-width: 650px;
-	}
-	.consultation h1 {
-		font-size: 26px;
-	}
-	button[type='submit'] {
-		font-size: 16px;
-	}
-}
-
-@media (min-width: 1200px) {
-	.consultation {
-		max-width: 740px;
-	}
-	.consultation h1 {
-		font-size: 30px;
-	}
-	/* textarea {
-		min-height: 150px;
-	} */
 }
