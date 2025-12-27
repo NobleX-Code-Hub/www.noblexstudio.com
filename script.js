@@ -471,24 +471,24 @@ const tracks = [
 ];
 
 const audio = document.getElementById('bg-music');
-audio.volume = 0.4;
+audio.volume = 0.9;
 
-// Restore index
+// Restore track index
 let index = parseInt(localStorage.getItem('musicIndex')) || 0;
 audio.src = tracks[index];
 
-// Restore time
+// Restore playback time
 const savedTime = localStorage.getItem('musicTime');
 if (savedTime) audio.currentTime = parseFloat(savedTime);
 
-// Save playback time
+// Save playback time every second
 setInterval(() => {
 	if (!audio.paused) {
 		localStorage.setItem('musicTime', audio.currentTime);
 	}
 }, 1000);
 
-// Next track
+// Playlist loop
 audio.addEventListener('ended', () => {
 	index = (index + 1) % tracks.length;
 	audio.src = tracks[index];
@@ -497,33 +497,39 @@ audio.addEventListener('ended', () => {
 	localStorage.setItem('musicTime', 0);
 });
 
-// Start music (only once)
+// Start music once
 function startMusic() {
 	audio
 		.play()
 		.then(() => {
 			localStorage.setItem('musicPlaying', 'true');
+			removeAllListeners();
 		})
 		.catch(() => {});
-
-	removeListeners();
 }
 
-// Remove triggers after start
-function removeListeners() {
+// Remove all triggers after start
+function removeAllListeners() {
 	document.removeEventListener('click', startMusic);
 	document.removeEventListener('touchstart', startMusic);
+	document.removeEventListener('mousemove', startMusic);
+	document.removeEventListener('keydown', startMusic);
 	window.removeEventListener('scroll', startMusic);
 }
 
 // Restore previous state
 if (localStorage.getItem('musicPlaying') === 'true') {
-	document.addEventListener('click', startMusic);
-	document.addEventListener('touchstart', startMusic);
-	window.addEventListener('scroll', startMusic);
+	addListeners();
 }
 
-// Triggers (click + scroll)
-document.addEventListener('click', startMusic);
-document.addEventListener('touchstart', startMusic);
-window.addEventListener('scroll', startMusic, { once: true });
+// Add all interaction listeners
+function addListeners() {
+	document.addEventListener('click', startMusic);
+	document.addEventListener('touchstart', startMusic);
+	document.addEventListener('mousemove', startMusic);
+	document.addEventListener('keydown', startMusic);
+	window.addEventListener('scroll', startMusic, { once: true });
+}
+
+// Initial listeners
+addListeners();
