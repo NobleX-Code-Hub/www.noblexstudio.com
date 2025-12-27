@@ -462,3 +462,68 @@ closeSides.addEventListener('click', () => {
 closeSide.addEventListener('click', () => {
 	mobile_menu.classList.toggle('active');
 });
+
+const tracks = [
+	'audio/Roddy_Ricch_-_Intro_[Official_Audio](720p)(1).mp3',
+	'audio/Lil_Baby___Lil_Durk_-_Bruised_Up__Official_Audio_(720p)(1).mp3',
+	'audio/Lil_Baby___Lil_Durk_-_Lying__Official_Audio_(256k).mp3',
+	'audio/Who_I_Want(256k).mp3',
+];
+
+const audio = document.getElementById('bg-music');
+audio.volume = 0.4;
+
+// Restore index
+let index = parseInt(localStorage.getItem('musicIndex')) || 0;
+audio.src = tracks[index];
+
+// Restore time
+const savedTime = localStorage.getItem('musicTime');
+if (savedTime) audio.currentTime = parseFloat(savedTime);
+
+// Save playback time
+setInterval(() => {
+	if (!audio.paused) {
+		localStorage.setItem('musicTime', audio.currentTime);
+	}
+}, 1000);
+
+// Next track
+audio.addEventListener('ended', () => {
+	index = (index + 1) % tracks.length;
+	audio.src = tracks[index];
+	audio.play();
+	localStorage.setItem('musicIndex', index);
+	localStorage.setItem('musicTime', 0);
+});
+
+// Start music (only once)
+function startMusic() {
+	audio
+		.play()
+		.then(() => {
+			localStorage.setItem('musicPlaying', 'true');
+		})
+		.catch(() => {});
+
+	removeListeners();
+}
+
+// Remove triggers after start
+function removeListeners() {
+	document.removeEventListener('click', startMusic);
+	document.removeEventListener('touchstart', startMusic);
+	window.removeEventListener('scroll', startMusic);
+}
+
+// Restore previous state
+if (localStorage.getItem('musicPlaying') === 'true') {
+	document.addEventListener('click', startMusic);
+	document.addEventListener('touchstart', startMusic);
+	window.addEventListener('scroll', startMusic);
+}
+
+// Triggers (click + scroll)
+document.addEventListener('click', startMusic);
+document.addEventListener('touchstart', startMusic);
+window.addEventListener('scroll', startMusic, { once: true });
