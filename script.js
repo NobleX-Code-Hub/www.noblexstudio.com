@@ -533,3 +533,142 @@ function addListeners() {
 
 // Initial listeners
 addListeners();
+
+const button = document.getElementById('whatsapp-float');
+const link = document.getElementById('wa-link');
+
+let isDragging = false;
+let moved = false;
+let offsetX = 0;
+let offsetY = 0;
+
+/* ---------- Desktop ---------- */
+button.addEventListener('mousedown', (e) => {
+	isDragging = true;
+	moved = false;
+	button.classList.add('dragging');
+
+	offsetX = e.clientX - button.offsetLeft;
+	offsetY = e.clientY - button.offsetTop;
+});
+
+document.addEventListener('mousemove', (e) => {
+	if (!isDragging) return;
+
+	moved = true;
+
+	button.style.left = e.clientX - offsetX + 'px';
+	button.style.top = e.clientY - offsetY + 'px';
+	button.style.right = 'auto';
+	button.style.bottom = 'auto';
+});
+
+document.addEventListener('mouseup', () => {
+	if (!isDragging) return;
+
+	snapToEdge();
+	isDragging = false;
+	button.classList.remove('dragging');
+});
+
+/* ---------- Mobile ---------- */
+button.addEventListener('touchstart', (e) => {
+	const touch = e.touches[0];
+	isDragging = true;
+	moved = false;
+	button.classList.add('dragging');
+
+	offsetX = touch.clientX - button.offsetLeft;
+	offsetY = touch.clientY - button.offsetTop;
+});
+
+document.addEventListener('touchmove', (e) => {
+	if (!isDragging) return;
+
+	moved = true;
+	const touch = e.touches[0];
+
+	button.style.left = touch.clientX - offsetX + 'px';
+	button.style.top = touch.clientY - offsetY + 'px';
+	button.style.right = 'auto';
+	button.style.bottom = 'auto';
+});
+
+document.addEventListener('touchend', () => {
+	if (!isDragging) return;
+
+	snapToEdge();
+	isDragging = false;
+	button.classList.remove('dragging');
+});
+
+/* ---------- Prevent click while dragging ---------- */
+link.addEventListener('click', (e) => {
+	if (moved) {
+		e.preventDefault();
+		moved = false;
+	}
+});
+
+/* ---------- Snap to nearest screen edge ---------- */
+function snapToEdge() {
+	const rect = button.getBoundingClientRect();
+	const screenWidth = window.innerWidth;
+
+	if (rect.left + rect.width / 2 < screenWidth / 2) {
+		button.style.left = '10px';
+		button.style.right = 'auto';
+	} else {
+		button.style.right = '10px';
+		button.style.left = 'auto';
+	}
+}
+
+const tooltip = document.querySelector('.tooltip');
+const dots = tooltip.querySelector('.typing-dots');
+const text = tooltip.querySelector('.tooltip-text');
+
+setTimeout(() => {
+	dots.style.display = 'none';
+	text.style.display = 'inline';
+}, 2000);
+
+const tabs = document.querySelectorAll('.tab');
+const cards = document.querySelectorAll('.card');
+const search = document.getElementById('search');
+const skeleton = document.querySelector('.skeleton-grid');
+const content = document.querySelector('.content-grid');
+
+let activeFilter = 'all';
+
+/* Skeleton Loader */
+setTimeout(() => {
+	skeleton.classList.add('hidden');
+	content.classList.remove('hidden');
+}, 1500);
+
+/* Tabs */
+tabs.forEach((tab) => {
+	tab.addEventListener('click', () => {
+		tabs.forEach((t) => t.classList.remove('active'));
+		tab.classList.add('active');
+		activeFilter = tab.dataset.filter;
+		filterItems();
+	});
+});
+
+/* Search */
+search.addEventListener('input', filterItems);
+
+function filterItems() {
+	const query = search.value.toLowerCase();
+
+	cards.forEach((card) => {
+		const title = card.dataset.title.toLowerCase();
+		const matchSearch = title.includes(query);
+		const matchFilter =
+			activeFilter === 'all' || card.classList.contains(activeFilter);
+
+		card.style.display = matchSearch && matchFilter ? 'block' : 'none';
+	});
+}
