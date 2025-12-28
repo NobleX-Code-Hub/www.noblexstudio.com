@@ -633,42 +633,106 @@ setTimeout(() => {
 	text.style.display = 'inline';
 }, 2000);
 
+// Unsplash
+
 const tabs = document.querySelectorAll('.tab');
-const cards = document.querySelectorAll('.card');
-const search = document.getElementById('search');
-const skeleton = document.querySelector('.skeleton-grid');
-const content = document.querySelector('.content-grid');
+const grid = document.getElementById('imageGrid');
 
-let activeFilter = 'all';
+// Unsplash API
+const UNSPLASH_ACCESS_KEY = 'k7RPKs8NktLNJsQVDRW8kXaptI8wnMSGmluTrzLvAaw'; // 🔑 Replace with your Unsplash API Key
 
-/* Skeleton Loader */
-setTimeout(() => {
-	skeleton.classList.add('hidden');
-	content.classList.remove('hidden');
-}, 1500);
+const keywords = {
+	'Web Design': 'website design ui',
+	'Graphic Design': 'graphic design poster',
+	'Logo Design': 'logo design',
+	Branding: 'branding identity',
+};
 
-/* Tabs */
+// Fallback image URLs (already hosted on Unsplash)
+const fallbackImages = {
+	'Web Design': [
+		'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+		'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+		'https://images.unsplash.com/photo-1498050108023-0a2c5f45683a',
+	],
+	'Graphic Design': [
+		'https://images.unsplash.com/photo-1498050108023-3a2f5f4f4568',
+		'https://images.unsplash.com/photo-1522202176988-66273c2fd55f',
+		'https://images.unsplash.com/photo-1498050108023-c5249f4df085',
+	],
+	'Logo Design': [
+		'https://images.unsplash.com/photo-1487014679447-9f8336841d58',
+		'https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d',
+		'https://images.unsplash.com/photo-1498050108023-0a2c5f45683a',
+	],
+	Branding: [
+		'https://images.unsplash.com/photo-1504384308090-c894fdcc538d',
+		'https://images.unsplash.com/photo-1498050108023-3a2f5f4f4568',
+		'https://images.unsplash.com/photo-1487014679447-9f8336841d58',
+	],
+};
+
+// Initial load
+loadImages('Web Design');
+
+// Tab click
 tabs.forEach((tab) => {
 	tab.addEventListener('click', () => {
 		tabs.forEach((t) => t.classList.remove('active'));
 		tab.classList.add('active');
-		activeFilter = tab.dataset.filter;
-		filterItems();
+		const service = tab.dataset.service;
+		loadImages(service);
 	});
 });
 
-/* Search */
-search.addEventListener('input', filterItems);
+async function loadImages(service) {
+	grid.innerHTML = '';
 
-function filterItems() {
-	const query = search.value.toLowerCase();
+	// Show 6 skeletons while loading
+	for (let i = 0; i < 6; i++) {
+		const skeleton = document.createElement('div');
+		skeleton.classList.add('skeleton');
+		grid.appendChild(skeleton);
+	}
 
-	cards.forEach((card) => {
-		const title = card.dataset.title.toLowerCase();
-		const matchSearch = title.includes(query);
-		const matchFilter =
-			activeFilter === 'all' || card.classList.contains(activeFilter);
+	try {
+		const response = await fetch(
+			`https://api.unsplash.com/photos/random?query=${encodeURIComponent(
+				keywords[service]
+			)}&count=6&client_id=${UNSPLASH_ACCESS_KEY}`
+		);
+		const data = await response.json();
 
-		card.style.display = matchSearch && matchFilter ? 'block' : 'none';
-	});
+		grid.innerHTML = ''; // remove skeletons
+
+		// If API fails or no data, use fallback
+		const images =
+			data && data.length
+				? data.map((p) => p.urls.small)
+				: fallbackImages[service];
+
+		images.forEach((url) => {
+			const card = document.createElement('div');
+			card.classList.add('card');
+			const img = document.createElement('img');
+			img.src = url;
+			img.alt = service;
+			card.appendChild(img);
+			grid.appendChild(card);
+		});
+	} catch (e) {
+		console.error('Error fetching images:', e);
+		grid.innerHTML = ''; // remove skeletons
+
+		// Use fallback images
+		fallbackImages[service].forEach((url) => {
+			const card = document.createElement('div');
+			card.classList.add('card');
+			const img = document.createElement('img');
+			img.src = url;
+			img.alt = service;
+			card.appendChild(img);
+			grid.appendChild(card);
+		});
+	}
 }
