@@ -463,77 +463,6 @@ closeSide.addEventListener('click', () => {
 	mobile_menu.classList.toggle('active');
 });
 
-const tracks = [
-	'audio/Roddy_Ricch_-_Intro_[Official_Audio](720p)(1).mp3',
-	'audio/Lil_Baby___Lil_Durk_-_Bruised_Up__Official_Audio_(720p)(1).mp3',
-	'audio/Lil_Baby___Lil_Durk_-_Lying__Official_Audio_(256k).mp3',
-	'audio/Who_I_Want(256k).mp3',
-];
-
-const audio = document.getElementById('bg-music');
-audio.volume = 0.9;
-
-// Restore track index
-let index = parseInt(localStorage.getItem('musicIndex')) || 0;
-audio.src = tracks[index];
-
-// Restore playback time
-const savedTime = localStorage.getItem('musicTime');
-if (savedTime) audio.currentTime = parseFloat(savedTime);
-
-// Save playback time every second
-setInterval(() => {
-	if (!audio.paused) {
-		localStorage.setItem('musicTime', audio.currentTime);
-	}
-}, 1000);
-
-// Playlist loop
-audio.addEventListener('ended', () => {
-	index = (index + 1) % tracks.length;
-	audio.src = tracks[index];
-	audio.play();
-	localStorage.setItem('musicIndex', index);
-	localStorage.setItem('musicTime', 0);
-});
-
-// Start music once
-function startMusic() {
-	audio
-		.play()
-		.then(() => {
-			localStorage.setItem('musicPlaying', 'true');
-			removeAllListeners();
-		})
-		.catch(() => {});
-}
-
-// Remove all triggers after start
-function removeAllListeners() {
-	document.removeEventListener('click', startMusic);
-	document.removeEventListener('touchstart', startMusic);
-	document.removeEventListener('mousemove', startMusic);
-	document.removeEventListener('keydown', startMusic);
-	window.removeEventListener('scroll', startMusic);
-}
-
-// Restore previous state
-if (localStorage.getItem('musicPlaying') === 'true') {
-	addListeners();
-}
-
-// Add all interaction listeners
-function addListeners() {
-	document.addEventListener('click', startMusic);
-	document.addEventListener('touchstart', startMusic);
-	document.addEventListener('mousemove', startMusic);
-	document.addEventListener('keydown', startMusic);
-	window.addEventListener('scroll', startMusic, { once: true });
-}
-
-// Initial listeners
-addListeners();
-
 const button = document.getElementById('whatsapp-float');
 const link = document.getElementById('wa-link');
 
@@ -736,3 +665,172 @@ async function loadImages(service) {
 		});
 	}
 }
+
+const testimonials = [
+	{
+		name: 'Daniel Roberts',
+		role: 'Startup Founder',
+		text: 'Outstanding service and clean design.',
+		img: 'clients/client2.jpg',
+	},
+	{
+		name: 'Sophia Williams',
+		role: 'Creative Director',
+		text: 'Professional delivery and smooth workflow.',
+		img: 'clients/client1.jpg',
+	},
+	{
+		name: 'Michael Turner',
+		role: 'Marketing Consultant',
+		text: 'Exceeded expectations completely.',
+		img: 'clients/client3.jpg',
+	},
+	{
+		name: 'Emily Stone',
+		role: 'Product Manager',
+		text: 'Fast communication and premium quality.',
+		img: 'clients/client4.jpg',
+	},
+	{
+		name: 'Chris Morgan',
+		role: 'Tech Consultant',
+		text: 'Reliable team, very skilled.',
+		img: 'clients/client5.jpg',
+	},
+];
+
+const track = document.getElementById('testimonialTrack');
+const dotsContainer = document.getElementById('dots');
+const prevBtn = document.querySelector('.prev');
+const nextBtn = document.querySelector('.next');
+
+let index = 0;
+let startX = 0;
+
+testimonials.forEach((t, i) => {
+	const card = document.createElement('div');
+	card.className = 'testimonial-card';
+	card.innerHTML = `    <div class="avatar">
+      <img src="${t.img}" alt='${t.name}' />
+    </div>
+    <div class="stars">★★★★★</div>
+    <p class="testimonial-text">${t.text}</p>
+    <h3 class="client-name">${t.name}</h3>
+    <span class="client-role">${t.role}</span>
+ `;
+	track.appendChild(card);
+
+	const dot = document.createElement('div');
+	dot.className = 'dot';
+	dot.addEventListener('click', () => slideTo(i));
+	dotsContainer.appendChild(dot);
+});
+
+const dots1 = document.querySelectorAll('.dot');
+dots1[0].classList.add('active');
+
+function slideTo(i) {
+	index = i;
+	const cardWidth = track.children[0].offsetWidth + 40;
+	track.style.transform = `translateX(-${index * cardWidth}px)`;
+	dots1.forEach((d) => d.classList.remove('active'));
+	dots1[index].classList.add('active');
+}
+
+/_ BUTTONS _/;
+nextBtn.onclick = () => {
+	if (index < testimonials.length - 1) slideTo(index + 1);
+};
+prevBtn.onclick = () => {
+	if (index > 0) slideTo(index - 1);
+};
+
+/_ TOUCH SWIPE _/;
+track.addEventListener('touchstart', (e) => {
+	startX = e.touches[0].clientX;
+});
+
+track.addEventListener('touchend', (e) => {
+	const endX = e.changedTouches[0].clientX;
+	if (startX - endX > 50 && index < testimonials.length - 1) slideTo(index + 1);
+	if (endX - startX > 50 && index > 0) slideTo(index - 1);
+});
+
+/* ============================
+   iPhone-Style Pull-to-Refresh with Chevron SVG
+============================ */
+
+/* Create custom chevron element */
+const ptrChevron = document.createElement('div');
+ptrChevron.style.width = '30px';
+ptrChevron.style.height = '30px';
+ptrChevron.style.margin = '0 auto 10px';
+ptrChevron.style.transition =
+	'transform 0.2s ease, opacity 0.2s ease, top 0.2s ease';
+ptrChevron.style.opacity = '0';
+ptrChevron.style.position = 'fixed';
+ptrChevron.style.top = '-50px';
+ptrChevron.style.left = '50%';
+ptrChevron.style.zIndex = '9999';
+ptrChevron.style.pointerEvents = 'none';
+ptrChevron.style.transformOrigin = 'center';
+ptrChevron.innerHTML = `
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#4facfe" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="6 9 12 15 18 9"></polyline>
+  </svg>
+`;
+document.body.appendChild(ptrChevron);
+
+let startY = 0;
+let pulling = false;
+
+/* Touch start */
+window.addEventListener('touchstart', (e) => {
+	if (window.scrollY === 0) {
+		startY = e.touches[0].clientY;
+		pulling = true;
+		ptrChevron.style.opacity = '1';
+		ptrChevron.style.transition =
+			'transform 0.2s ease, opacity 0.2s ease, top 0.2s ease';
+	}
+});
+
+/* Touch move */
+window.addEventListener('touchmove', (e) => {
+	if (!pulling) return;
+	const distance = e.touches[0].clientY - startY;
+	if (distance > 0) {
+		ptrChevron.style.top = `${distance - 50}px`;
+		ptrChevron.style.transform = `rotate(${Math.min(
+			distance * 1.5,
+			180
+		)}deg) scale(${1 + distance / 150})`;
+	} else {
+		ptrChevron.style.top = '-50px';
+		ptrChevron.style.transform = 'rotate(0deg) scale(1)';
+	}
+});
+
+/* Touch end */
+window.addEventListener('touchend', (e) => {
+	if (!pulling) return;
+	const distance = e.changedTouches[0].clientY - startY;
+
+	if (distance > 80) {
+		// Enough pull: bounce and refresh
+		ptrChevron.style.transition = 'top 0.3s cubic-bezier(.28,.84,.42,1.2)';
+		ptrChevron.style.top = '20px';
+		setTimeout(() => {
+			window.location.reload();
+		}, 300);
+	} else if (distance > 0) {
+		// Less than 80px: snap back with smooth spring animation
+		ptrChevron.style.transition =
+			'top 0.5s cubic-bezier(.68,-0.55,.27,1.55), transform 0.5s ease, opacity 0.5s ease';
+		ptrChevron.style.top = '-50px';
+		ptrChevron.style.transform = 'rotate(0deg) scale(1)';
+	}
+
+	ptrChevron.style.opacity = '0';
+	pulling = false;
+});
